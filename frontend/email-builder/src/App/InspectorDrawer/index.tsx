@@ -21,6 +21,8 @@ export default function InspectorDrawer() {
         return <ConfigurationPanel />;
       case 'styles':
         return <StylesPanel />;
+      default:
+        return null;
     }
   };
 
