@@ -128,7 +128,7 @@ func parseLettermintSignature(sig string) (int64, string, error) {
 		if len(kv) != 2 {
 			continue
 		}
-        switch kv[0] {
+        switch k := kv[0]; k {
         case "t":
             if _, err := fmt.Sscanf(kv[1], "%d", &ts); err != nil {
                 return 0, "", fmt.Errorf("invalid timestamp in signature: %v", err)
