@@ -962,12 +962,13 @@ func initHTTPServer(cfg *Config, urlCfg *UrlConfig, i *i18n.I18n, fs stuffbin.Fi
 		uploadFsURI    = ko.String("upload.filesystem.upload_uri")
 		publicURL      = ko.String("upload.s3.public_url")
 	)
-	switch {
-	case uploadProvider == "filesystem" && uploadFsURI != "":
-		srv.Static(uploadFsURI, ko.String("upload.filesystem.upload_path"))
-	case uploadProvider == "s3" && strings.HasPrefix(publicURL, "/"):
-		srv.GET(path.Join(publicURL, "/:filepath"), app.ServeS3Media)
-	}
+    switch {
+    case uploadProvider == "filesystem" && uploadFsURI != "":
+        srv.Static(uploadFsURI, ko.String("upload.filesystem.upload_path"))
+    case uploadProvider == "s3" && strings.HasPrefix(publicURL, "/"):
+        srv.GET(path.Join(publicURL, "/:filepath"), app.ServeS3Media)
+    default:
+    }
 
 	// Register all HTTP handlers.
 	initHTTPHandlers(srv, app)
