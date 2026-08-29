@@ -95,7 +95,7 @@ func New(name string, servers ...Server) (*Emailer, error) {
 			}
 
             // SSL/TLS, not STARTTLS.
-            switch s.TLSType {
+            switch strings.ToUpper(s.TLSType) {
             case "TLS":
                 s.Opt.SSL = smtppool.SSLTLS
             case "STARTTLS":
