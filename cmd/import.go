@@ -44,13 +44,14 @@ func (a *App) ImportSubscribers(c echo.Context) error {
 
 	// If no status is specified, pick a default one.
     	if opt.SubStatus == "" {
-        	switch opt.Mode {
-        	case subimporter.ModeSubscribe:
-        		opt.SubStatus = models.SubscriptionStatusUnconfirmed
-        	case subimporter.ModeBlocklist:
-        		opt.SubStatus = models.SubscriptionStatusUnsubscribed
-        	default:
-        	}
+        switch opt.Mode {
+        case subimporter.ModeSubscribe:
+            opt.SubStatus = models.SubscriptionStatusUnconfirmed
+        case subimporter.ModeBlocklist:
+            opt.SubStatus = models.SubscriptionStatusUnsubscribed
+        default:
+            opt.SubStatus = models.SubscriptionStatusUnconfirmed
+        }
     	}
 
 	if opt.SubStatus != models.SubscriptionStatusUnconfirmed &&
