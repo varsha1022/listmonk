@@ -108,55 +108,57 @@ func (a *App) ExportCampaignAnalytics(c echo.Context) error {
 	hdr.Set(echo.HeaderContentDisposition, "attachment; filename=campaign_"+typ+".csv")
 	hdr.Set("Cache-Control", "no-cache")
 
-	switch typ {
-	case "views":
-		wr.Write([]string{"campaign_id", "campaign_uuid", "campaign_name", "subscriber_id", "subscriber_uuid", "email", "subscriber_name", "created_at"})
-		next := a.core.ExportCampaignViews(since, a.cfg.DBBatchSize)
-		for {
-			rows, err := next()
-			if err != nil {
-				return err
-			}
-			if len(rows) == 0 {
-				break
-			}
-			for _, r := range rows {
-				if err := wr.Write([]string{
-					strconv.Itoa(r.CampaignID), r.CampaignUUID, r.CampaignName,
-					strconv.Itoa(r.SubscriberID), r.SubscriberUUID, r.Email, r.SubscriberName,
-					r.CreatedAt.Format(time.RFC3339),
-				}); err != nil {
-					a.log.Printf("error streaming CSV: %v", err)
-					return nil
-				}
-			}
-			wr.Flush()
-		}
+    switch typ {
+    case "views":
+        wr.Write([]string{"campaign_id", "campaign_uuid", "campaign_name", "subscriber_id", "subscriber_uuid", "email", "subscriber_name", "created_at"})
+        next := a.core.ExportCampaignViews(since, a.cfg.DBBatchSize)
+        for {
+            rows, err := next()
+            if err != nil {
+                return err
+            }
+            if len(rows) == 0 {
+                break
+            }
+            for _, r := range rows {
+                if err := wr.Write([]string{
+                    strconv.Itoa(r.CampaignID), r.CampaignUUID, r.CampaignName,
+                    strconv.Itoa(r.SubscriberID), r.SubscriberUUID, r.Email, r.SubscriberName,
+                    r.CreatedAt.Format(time.RFC3339),
+                }); err != nil {
+                    a.log.Printf("error streaming CSV: %v", err)
+                    return nil
+                }
+            }
+            wr.Flush()
+        }
 
-	case "clicks":
-		wr.Write([]string{"campaign_id", "campaign_uuid", "campaign_name", "subscriber_id", "subscriber_uuid", "email", "subscriber_name", "url", "created_at"})
-		next := a.core.ExportCampaignLinkClicks(since, a.cfg.DBBatchSize)
-		for {
-			rows, err := next()
-			if err != nil {
-				return err
-			}
-			if len(rows) == 0 {
-				break
-			}
-			for _, r := range rows {
-				if err := wr.Write([]string{
-					strconv.Itoa(r.CampaignID), r.CampaignUUID, r.CampaignName,
-					strconv.Itoa(r.SubscriberID), r.SubscriberUUID, r.Email, r.SubscriberName, r.URL,
-					r.CreatedAt.Format(time.RFC3339),
-				}); err != nil {
-					a.log.Printf("error streaming CSV: %v", err)
-					return nil
-				}
-			}
-			wr.Flush()
-		}
-	}
+    case "clicks":
+        wr.Write([]string{"campaign_id", "campaign_uuid", "campaign_name", "subscriber_id", "subscriber_uuid", "email", "subscriber_name", "url", "created_at"})
+        next := a.core.ExportCampaignLinkClicks(since, a.cfg.DBBatchSize)
+        for {
+            rows, err := next()
+            if err != nil {
+                return err
+            }
+            if len(rows) == 0 {
+                break
+            }
+            for _, r := range rows {
+                if err := wr.Write([]string{
+                    strconv.Itoa(r.CampaignID), r.CampaignUUID, r.CampaignName,
+                    strconv.Itoa(r.SubscriberID), r.SubscriberUUID, r.Email, r.SubscriberName, r.URL,
+                    r.CreatedAt.Format(time.RFC3339),
+                }); err != nil {
+                    a.log.Printf("error streaming CSV: %v", err)
+                    return nil
+                }
+            }
+            wr.Flush()
+        }
+    default:
+        return echo.NewHTTPError(http.StatusBadRequest, a.i18n.T("globals.messages.invalidData"))
+    }
 
 	return nil
 }
