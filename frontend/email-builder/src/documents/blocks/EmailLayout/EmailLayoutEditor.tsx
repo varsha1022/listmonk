@@ -8,7 +8,7 @@ import { EmailLayoutProps } from './EmailLayoutPropsSchema';
 
 function getFontFamily(fontFamily: EmailLayoutProps['fontFamily']) {
   const f = fontFamily ?? 'MODERN_SANS';
-  switch (f) {
+  switch (f) { default:
     case 'MODERN_SANS':
       return '"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif';
     case 'BOOK_SANS':
