@@ -261,17 +261,19 @@ func (a *App) CreateCampaign(c echo.Context) error {
 	user := auth.GetUser(c)
 	o.ListIDs = user.FilterListsByPerm(auth.PermTypeGet|auth.PermTypeManage, o.ListIDs)
 
-	// If the campaign's 'opt-in', prepare a default message.
-	switch o.Type {
-	case models.CampaignTypeOptin:
-		op, err := a.makeOptinCampaignMessage(o)
-		if err != nil {
-			return err
-		}
-		o = op
-	case "":
-		o.Type = models.CampaignTypeRegular
-	}
+    // If the campaign's 'opt-in', prepare a default message.
+    switch o.Type {
+    case models.CampaignTypeOptin:
+        op, err := a.makeOptinCampaignMessage(o)
+        if err != nil {
+            return err
+        }
+        o = op
+    case "":
+        o.Type = models.CampaignTypeRegular
+    default:
+        // no-op
+    }
 
 	if o.Messenger == "" {
 		o.Messenger = "email"
