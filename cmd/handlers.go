@@ -361,6 +361,8 @@ func serveCustomAppearance(name string) echo.HandlerFunc {
 			hdr = "application/javascript; charset=utf-8"
 
 		default:
+			out = nil
+			hdr = ""
 			return echo.NewHTTPError(http.StatusNotFound, "not found")
 		}
 
