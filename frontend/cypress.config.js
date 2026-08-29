@@ -4,11 +4,11 @@ module.exports = defineConfig({
   env: {
     apiUrl: 'http://localhost:9000',
     serverInitCmd:
-      'pkill -9 listmonk; cd ../ && LISTMONK_ADMIN_USER=admin LISTMONK_ADMIN_PASSWORD=listmonk ./listmonk --install --yes && setsid ./listmonk </dev/null >/dev/null 2>&1 &',
+      `pkill -9 listmonk; cd ../ && LISTMONK_ADMIN_USER=${process.env.LISTMONK_ADMIN_USER || 'admin'} LISTMONK_ADMIN_PASSWORD=${process.env.LISTMONK_ADMIN_PASSWORD} ./listmonk --install --yes && setsid ./listmonk </dev/null >/dev/null 2>&1 &`,
     serverInitBlankCmd:
       'pkill -9 listmonk; cd ../ && ./listmonk --install --yes && setsid ./listmonk </dev/null >/dev/null 2>&1 &',
-    LISTMONK_ADMIN_USER: 'admin',
-    LISTMONK_ADMIN_PASSWORD: 'listmonk',
+    LISTMONK_ADMIN_USER: process.env.LISTMONK_ADMIN_USER || 'admin',
+    LISTMONK_ADMIN_PASSWORD: process.env.LISTMONK_ADMIN_PASSWORD,
   },
   viewportWidth: 1400,
   viewportHeight: 950,
