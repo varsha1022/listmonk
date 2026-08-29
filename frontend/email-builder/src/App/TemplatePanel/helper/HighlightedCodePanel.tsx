@@ -10,18 +10,16 @@ export default function HighlightedCodePanel({ type, value }: TextEditorPanelPro
   const [code, setCode] = useState<string | null>(null);
 
   useEffect(() => {
-    switch (type) {
-      case 'html':
-        html(value).then(setCode);
-        return;
-      case 'json':
-        json(value).then(setCode);
-        return;
-      default:
-        // For unknown types fall back to treating the value as plain text
-        setCode(String(value));
-        return;
+    if (type === 'html') {
+      html(value).then(setCode);
+      return;
     }
+    if (type === 'json') {
+      json(value).then(setCode);
+      return;
+    }
+    // For unknown types fall back to treating the value as plain text
+    setCode(String(value));
   }, [setCode, value, type]);
 
   if (code === null) {
