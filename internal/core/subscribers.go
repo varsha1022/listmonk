@@ -656,16 +656,18 @@ func traverseQueryPlan(node map[string]any, tables map[string]struct{}) {
 	}
 
 	// Recursively check nested plans (e.g., subqueries, CTEs).
-	for _, v := range node {
-		switch v := v.(type) {
-		case map[string]any:
-			traverseQueryPlan(v, tables)
-		case []any:
-			for _, item := range v {
-				if m, ok := item.(map[string]any); ok {
-					traverseQueryPlan(m, tables)
-				}
-			}
-		}
-	}
+    for _, v := range node {
+        switch v := v.(type) {
+        case map[string]any:
+            traverseQueryPlan(v, tables)
+        case []any:
+            for _, item := range v {
+                if m, ok := item.(map[string]any); ok {
+                    traverseQueryPlan(m, tables)
+                }
+            }
+        default:
+            continue
+        }
+    }
 }
