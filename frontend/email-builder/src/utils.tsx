@@ -74,7 +74,7 @@ export function renderHtmlWithMeta(
 }
 
 function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return ['.', '*', '+', '?', '^', '$', '{', '}', '(', ')', '|', '[', ']', '\\'].reduce((acc, ch) => acc.split(ch).join('\\' + ch), s);
 }
 
 function escapeHtmlAttribute(s: string): string {
