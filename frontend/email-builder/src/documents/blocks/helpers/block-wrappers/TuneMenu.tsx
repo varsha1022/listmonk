@@ -88,7 +88,7 @@ export default function TuneMenu({ blockId }: Props) {
     // Recursively clone a block and all its descendants, assigning new IDs.
     const clones: Record<string, TEditorBlock> = {};
     const cloneBlock = (srcId: string): string => {
-      const newId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const newId = `block-${Date.now()}-${typeof crypto?.randomUUID === 'function' ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36).padStart(2, '0')).join('').slice(0, 5)}`;
       const src = document[srcId] as TEditorBlock;
       if (!src) {
         return newId;
