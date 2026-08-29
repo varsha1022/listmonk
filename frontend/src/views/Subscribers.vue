@@ -107,7 +107,7 @@
 
       <b-table-column v-slot="props" field="email" :label="$t('subscribers.email')" header-class="cy-email" sortable
         :td-attrs="$utils.tdID">
-        <a :href="`/subscribers/${props.row.id}`" @click.prevent="showEditForm(props.row)"
+        <a :href="`/subscribers/${encodeURIComponent(props.row.id)}`" @click.prevent="showEditForm(props.row)"
           :class="{ 'blocklisted': props.row.status === 'blocklisted' }">
           {{ props.row.email }}
           <copy-text :text="`${props.row.email}`" hide-text />
@@ -130,7 +130,7 @@
       </b-table-column>
 
       <b-table-column v-slot="props" field="name" :label="$t('globals.fields.name')" header-class="cy-name" sortable>
-        <a :href="`/subscribers/${props.row.id}`" @click.prevent="showEditForm(props.row)"
+        <a :href="`/subscribers/${encodeURIComponent(props.row.id)}`" @click.prevent="showEditForm(props.row)"
           :class="{ 'blocklisted': props.row.status === 'blocklisted' }">
           {{ props.row.name }}
           <copy-text :text="`${props.row.name}`" hide-text />
@@ -153,13 +153,13 @@
 
       <b-table-column v-slot="props" cell-class="actions" align="right">
         <div>
-          <a :href="`/api/subscribers/${props.row.id}/export`" data-cy="btn-download"
+          <a :href="`/api/subscribers/${encodeURIComponent(props.row.id)}/export`" data-cy="btn-download"
             :aria-label="$t('subscribers.downloadData')">
             <b-tooltip :label="$t('subscribers.downloadData')" type="is-dark">
               <b-icon icon="cloud-download-outline" size="is-small" />
             </b-tooltip>
           </a>
-          <a v-if="$can('subscribers:manage')" :href="`/subscribers/${props.row.id}`"
+          <a v-if="$can('subscribers:manage')" :href="`/subscribers/${encodeURIComponent(props.row.id)}`"
             @click.prevent="showEditForm(props.row)" data-cy="btn-edit" :aria-label="$t('globals.buttons.edit')">
             <b-tooltip :label="$t('globals.buttons.edit')" type="is-dark">
               <b-icon icon="pencil-outline" size="is-small" />
