@@ -67,8 +67,9 @@ export default function TemplatePanel() {
         return <HtmlPanel />;
       case 'json':
         return <JsonPanel />;
-      default:
+      default: {
         return null;
+      }
     }
   };
 
