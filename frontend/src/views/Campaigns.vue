@@ -369,9 +369,11 @@ export default Vue.extend({
     },
 
     getCampaigns() {
+      const rawQuery = String(this.queryParams.query || '').slice(0, 200);
+      const safeQuery = rawQuery.replace(/[^\p{L}\p{N}\s]/gu, ' ');
       this.$api.getCampaigns({
         page: this.queryParams.page,
-        query: this.queryParams.query.replace(/[^\p{L}\p{N}\s]/gu, ' '),
+        query: safeQuery,
         order_by: this.queryParams.orderBy,
         order: this.queryParams.order,
         no_body: true,
@@ -499,11 +501,12 @@ export default Vue.extend({
         if (!this.bulk.all && this.bulk.checked.length > 0) {
           // If 'all' is not selected, delete campaigns by IDs.
           params.id = this.bulk.checked.map((c) => c.id);
-        } else {
-          // 'All' is selected, delete by query.
-          params.query = this.queryParams.query.replace(/[^\p{L}\p{N}\s]/gu, ' ');
-          params.all = this.bulk.all;
-        }
+          } else {
+            // 'All' is selected, delete by query.
+            const rawQuery = String(this.queryParams.query || '').slice(0, 200);
+            params.query = rawQuery.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+            params.all = this.bulk.all;
+          }
 
         this.$api.deleteCampaigns(params)
           .then(() => {
