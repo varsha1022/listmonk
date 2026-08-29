@@ -359,6 +359,9 @@ func serveCustomAppearance(name string) echo.HandlerFunc {
 		case "public.custom_js":
 			out = app.cfg.Appearance.PublicJS
 			hdr = "application/javascript; charset=utf-8"
+
+		default:
+			return echo.NewHTTPError(http.StatusNotFound, "not found")
 		}
 
 		return c.Blob(http.StatusOK, hdr, out)
