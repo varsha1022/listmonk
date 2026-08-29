@@ -28,7 +28,7 @@
           <h4>{{ $t('forms.publicSubPage') }}</h4>
           <p>
             <a :href="`${serverConfig.root_url}/subscription/form`" target="_blank" rel="noopener noreferer"
-              data-cy="url" @click.prevent="window.open(((serverConfig.root_url||'').replace(/^\s*javascript:/i,'')) + '/subscription/form', '_blank', 'noopener,noreferrer')">
+              data-cy="url">
               {{ serverConfig.root_url }}/subscription/form
             </a>
           </p>
