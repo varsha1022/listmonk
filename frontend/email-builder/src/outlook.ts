@@ -19,9 +19,21 @@ function appendMissingStyles(style: string | null, declarations: Array<[string, 
     return current;
   }
 
-  return [current.replace(/;+\s*$/, ''), ...missing]
-    .filter(Boolean)
-    .join(';');
+  // Remove trailing semicolons and whitespace without using a regex to avoid
+  // potential ReDoS issues with crafted inputs.
+  let base = current;
+  let end = base.length;
+  while (end > 0) {
+    const ch = base.charAt(end - 1);
+    if (ch === ';' || ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') {
+      end -= 1;
+      continue;
+    }
+    break;
+  }
+  base = base.slice(0, end);
+
+  return [base, ...missing].filter(Boolean).join(';');
 }
 
 function setStyleValues(style: string | null, declarations: Array<[string, string | null]>) {
@@ -67,12 +79,26 @@ function getPixelValue(value?: string) {
     return null;
   }
 
-  const match = value.trim().match(/^(-?\d+(?:\.\d+)?)px$/i);
-  if (!match) {
+  const s = value.trim();
+  if (s.length < 3) {
     return null;
   }
 
-  return Math.round(Number(match[1]));
+  if (s.slice(-2).toLowerCase() !== 'px') {
+    return null;
+  }
+
+  const numStr = s.slice(0, -2).trim();
+  if (numStr === '') {
+    return null;
+  }
+
+  const num = Number(numStr);
+  if (!Number.isFinite(num)) {
+    return null;
+  }
+
+  return Math.round(num);
 }
 
 function getPixelWidthFromImage(img: HTMLImageElement) {
@@ -82,14 +108,29 @@ function getPixelWidthFromImage(img: HTMLImageElement) {
   }
 
   const style = img.getAttribute('style') || '';
-  const widthMatch = style.match(/(?:^|;)\s*width\s*:\s*(\d+)px(?:;|$)/i);
-  if (widthMatch) {
-    return widthMatch[1];
+  // Parse inline style declarations without using complex regexes.
+  const declarations = style.split(';').map((d) => d.trim()).filter(Boolean);
+
+  for (const decl of declarations) {
+    const sep = decl.indexOf(':');
+    if (sep === -1) continue;
+    const prop = decl.slice(0, sep).trim().toLowerCase();
+    const val = decl.slice(sep + 1).trim().toLowerCase();
+    if (prop === 'width' && val.endsWith('px')) {
+      const num = val.slice(0, -2).trim();
+      if (/^\d+$/.test(num)) return num;
+    }
   }
 
-  const maxWidthMatch = style.match(/(?:^|;)\s*max-width\s*:\s*(\d+)px(?:;|$)/i);
-  if (maxWidthMatch) {
-    return maxWidthMatch[1];
+  for (const decl of declarations) {
+    const sep = decl.indexOf(':');
+    if (sep === -1) continue;
+    const prop = decl.slice(0, sep).trim().toLowerCase();
+    const val = decl.slice(sep + 1).trim().toLowerCase();
+    if (prop === 'max-width' && val.endsWith('px')) {
+      const num = val.slice(0, -2).trim();
+      if (/^\d+$/.test(num)) return num;
+    }
   }
 
   return null;
