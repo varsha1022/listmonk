@@ -280,7 +280,7 @@ func (c *Core) UpdateCampaignStatus(id int, status string) (models.Campaign, err
             errMsg = c.i18n.T("campaigns.onlyActiveCancel")
         }
     default:
-        break
+        errMsg = c.i18n.T("globals.messages.invalidData")
     }
 
 	if len(errMsg) > 0 {
