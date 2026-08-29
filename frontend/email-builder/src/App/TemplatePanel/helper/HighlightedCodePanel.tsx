@@ -17,6 +17,10 @@ export default function HighlightedCodePanel({ type, value }: TextEditorPanelPro
       case 'json':
         json(value).then(setCode);
         return;
+      default:
+        // For unknown types fall back to treating the value as plain text
+        setCode(String(value));
+        return;
     }
   }, [setCode, value, type]);
 
