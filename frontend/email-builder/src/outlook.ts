@@ -9,7 +9,11 @@ type TPaddingValues = {
 const PRESENTATION_TABLE_STYLE = 'border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;';
 
 function appendMissingStyles(style: string | null, declarations: Array<[string, string]>) {
-  const current = (style || '').trim();
+  let current = (style || '').trim();
+  const MAX_STYLE_LENGTH = 2000;
+  if (current.length > MAX_STYLE_LENGTH) {
+    current = current.slice(0, MAX_STYLE_LENGTH);
+  }
   const lower = current.toLowerCase();
   const missing = declarations
     .filter(([property]) => !lower.includes(`${property.toLowerCase()}:`))
@@ -55,7 +59,11 @@ function setStyleValues(style: string | null, declarations: Array<[string, strin
 }
 
 function parseStyleMap(style: string | null) {
-  return (style || '')
+  const raw = (style || '').trim();
+  const MAX_STYLE_LENGTH = 2000;
+  const safe = raw.length > MAX_STYLE_LENGTH ? raw.slice(0, MAX_STYLE_LENGTH) : raw;
+
+  return safe
     .split(';')
     .map((entry) => entry.trim())
     .filter(Boolean)
@@ -84,6 +92,11 @@ function getPixelValue(value?: string) {
     return null;
   }
 
+  // guard against excessively long inputs
+  if (s.length > 50) {
+    return null;
+  }
+
   if (s.slice(-2).toLowerCase() !== 'px') {
     return null;
   }
@@ -93,6 +106,7 @@ function getPixelValue(value?: string) {
     return null;
   }
 
+  // parse as number but avoid relying on complex regexes
   const num = Number(numStr);
   if (!Number.isFinite(num)) {
     return null;
