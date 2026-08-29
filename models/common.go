@@ -149,14 +149,16 @@ func (s StringIntMap) Scan(src any) error {
 // Scan implements the sql.Scanner interface.
 func (h *Headers) Scan(src any) error {
 	var b []byte
-	switch src := src.(type) {
-	case []byte:
-		b = src
-	case string:
-		b = []byte(src)
-	case nil:
-		return nil
-	}
+    switch src := src.(type) {
+    case []byte:
+        b = src
+    case string:
+        b = []byte(src)
+    case nil:
+        return nil
+    default:
+        return fmt.Errorf("unsupported type %T", src)
+    }
 
 	if err := json.Unmarshal(b, h); err != nil {
 		return err
