@@ -27,7 +27,9 @@ func (a *App) GCSubscribers(c echo.Context) error {
 		n, err = a.core.DeleteOrphanSubscribers()
 	default:
 		err = echo.NewHTTPError(http.StatusBadRequest, a.i18n.T("globals.messages.invalidData"))
-	}
+    default:
+        return echo.NewHTTPError(http.StatusBadRequest, a.i18n.T("globals.messages.invalidData"))
+    }
 
 	if err != nil {
 		return err
