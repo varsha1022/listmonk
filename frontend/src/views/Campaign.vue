@@ -241,7 +241,7 @@
                     <b-switch data-cy="btn-archive" v-model="form.archive" :disabled="!canArchive" />
                   </div>
                   <div class="column is-12">
-                    <a :href="`${serverConfig.root_url}/archive/${data.uuid}`" target="_blank" rel="noopener noreferer"
+                    <a :href="`${(serverConfig.root_url || '').replace(/\/$/, '')}/archive/${encodeURIComponent(data.uuid || '')}`" target="_blank" rel="noopener noreferer"
                       :class="{ 'has-text-grey-light': !form.archive }" aria-label="$t('campaigns.archive')">
                       <b-icon icon="link-variant" />
                     </a>
