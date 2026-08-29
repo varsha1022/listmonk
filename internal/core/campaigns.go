@@ -253,8 +253,8 @@ func (c *Core) UpdateCampaignStatus(id int, status string) (models.Campaign, err
 		return models.Campaign{}, err
 	}
 
-	errMsg := ""
-	switch status {
+    errMsg := ""
+    switch status {
 	case models.CampaignStatusDraft:
 		if cm.Status != models.CampaignStatusScheduled {
 			errMsg = c.i18n.T("campaigns.onlyScheduledAsDraft")
@@ -275,11 +275,13 @@ func (c *Core) UpdateCampaignStatus(id int, status string) (models.Campaign, err
 		if cm.Status != models.CampaignStatusRunning {
 			errMsg = c.i18n.T("campaigns.onlyActivePause")
 		}
-	case models.CampaignStatusCancelled:
-		if cm.Status != models.CampaignStatusRunning && cm.Status != models.CampaignStatusPaused {
-			errMsg = c.i18n.T("campaigns.onlyActiveCancel")
-		}
-	}
+    case models.CampaignStatusCancelled:
+        if cm.Status != models.CampaignStatusRunning && cm.Status != models.CampaignStatusPaused {
+            errMsg = c.i18n.T("campaigns.onlyActiveCancel")
+        }
+    default:
+        break
+    }
 
 	if len(errMsg) > 0 {
 		return models.Campaign{}, echo.NewHTTPError(http.StatusBadRequest, errMsg)
