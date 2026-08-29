@@ -137,7 +137,7 @@
           <b-field>
             <b-button expanded class="is-primary" tag="a" icon-left="download"
               :href="exportURL">
-              {{ $t('subscribers.export') }}
+              <span v-text="$t('subscribers.export')"></span>
             </b-button>
           </b-field>
         </div>
