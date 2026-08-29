@@ -13,16 +13,28 @@ module.exports = (on, config) => {
     // Kill listmonk, reset the DB, and start the server in the background.
     resetServer({ blank = false } = {}) {
       try {
-        execSync('pkill -9 listmonk', { stdio: 'ignore', env: { ...process.env, PATH: '/usr/sbin:/usr/bin:/sbin:/bin' } });
+        const securePath = '/usr/sbin:/usr/bin:/sbin:/bin';
+        const execEnv = Object.assign({}, process.env, { PATH: securePath });
+        execSync('pkill -9 listmonk', { stdio: 'ignore', env: execEnv });
       } catch (e) {
         // Do nothing.
       }
 
       // Run install.
-      const env = { ...process.env, PATH: '/usr/sbin:/usr/bin:/sbin:/bin' };
+      const securePath = '/usr/sbin:/usr/bin:/sbin:/bin';
+      const env = Object.assign({}, process.env, { PATH: securePath });
       if (!blank) {
         if (process.env.LISTMONK_ADMIN_USER) env.LISTMONK_ADMIN_USER = process.env.LISTMONK_ADMIN_USER;
-        if (process.env.LISTMONK_ADMIN_PASSWORD) env.LISTMONK_ADMIN_PASSWORD = process.env.LISTMONK_ADMIN_PASSWORD;
+        if (process.env.LISTMONK_ADMIN_PASSWORD_FILE) {
+          const fs = require('fs');
+          try {
+            env.LISTMONK_ADMIN_PASSWORD = fs.readFileSync(process.env.LISTMONK_ADMIN_PASSWORD_FILE, 'utf8').trim();
+          } catch (e) {
+            if (process.env.LISTMONK_ADMIN_PASSWORD) env.LISTMONK_ADMIN_PASSWORD = process.env.LISTMONK_ADMIN_PASSWORD;
+          }
+        } else if (process.env.LISTMONK_ADMIN_PASSWORD) {
+          env.LISTMONK_ADMIN_PASSWORD = process.env.LISTMONK_ADMIN_PASSWORD;
+        }
       }
 
       execSync('./listmonk --install --yes', { cwd: rootDir, env, stdio: 'ignore' });
