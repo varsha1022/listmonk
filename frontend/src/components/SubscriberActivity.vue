@@ -76,7 +76,7 @@
           paginated :per-page="10" :pagination-simple="false" class="link-clicks-table">
           <b-table-column v-slot="props" field="url" :label="$t('globals.terms.url')" cell-class="link-click-url"
             sortable>
-            <a :href="props.row.url" target="_blank" rel="noopener noreferrer">
+            <a :href="(props.row.url && (props.row.url.startsWith('http://') || props.row.url.startsWith('https://'))) ? props.row.url : 'about:blank'" target="_blank" rel="noopener noreferrer">
               {{ props.row.url }}
             </a>
           </b-table-column>
