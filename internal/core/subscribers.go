@@ -667,7 +667,6 @@ func traverseQueryPlan(node map[string]any, tables map[string]struct{}) {
                 }
             }
         default:
-            continue
         }
     }
 }
