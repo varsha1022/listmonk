@@ -28,20 +28,33 @@ const markdownToVisualBlock = (markdown) => {
 
   lines.forEach((line) => {
     // Handle ATX headings (# Heading)
-    const heading = line.match(/^(#+)\s+(.*)/);
+    let heading = null;
+    if (line && line[0] === '#') {
+      let hashCount = 0;
+      while (hashCount < line.length && line[hashCount] === '#') hashCount++;
+      if (hashCount > 0 && hashCount < line.length && line[hashCount] === ' ') {
+        heading = { level: Math.min(hashCount, 6), text: line.slice(hashCount + 1) };
+      }
+    }
     if (heading) {
       flushText();
 
       blocks.push(createBlock('Heading', {
-        text: heading[2],
-        level: `h${Math.min(heading[1].length, 6)}`,
+        text: heading.text,
+        level: `h${heading.level}`,
       }));
       return;
     }
 
     // Handle Setext headings (===== or -----)
     const trimmed = line.trim();
-    if (/^(=+|-+)$/.test(trimmed) && textBuf.length > 0) {
+    if (trimmed.length > 0 && textBuf.length > 0) {
+      const ch = trimmed[0];
+      let allSame = true;
+      for (let i = 0; i < trimmed.length; i++) {
+        if (trimmed[i] !== ch) { allSame = false; break; }
+      }
+      if (allSame && (ch === '=' || ch === '-')) {
       const lastLine = textBuf.pop();
       if (lastLine.trim()) {
         flushText();
