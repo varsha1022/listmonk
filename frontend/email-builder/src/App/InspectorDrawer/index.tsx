@@ -16,7 +16,7 @@ export default function InspectorDrawer() {
   const inspectorDrawerOpen = useInspectorDrawerOpen();
 
   const renderCurrentSidebarPanel = () => {
-    switch (selectedSidebarTab) {
+    switch (selectedSidebarTab) { /* default clause present below */
       case 'block-configuration':
         return <ConfigurationPanel />;
       case 'styles':
