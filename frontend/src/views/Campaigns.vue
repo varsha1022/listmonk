@@ -370,7 +370,12 @@ export default Vue.extend({
 
     getCampaigns() {
       const rawQuery = String(this.queryParams.query || '').slice(0, 200);
-      const safeQuery = rawQuery.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+      let safeQuery;
+      try {
+        safeQuery = rawQuery.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+      } catch (e) {
+        safeQuery = rawQuery.replace(/[^A-Za-z0-9\s]/g, ' ');
+      }
       this.$api.getCampaigns({
         page: this.queryParams.page,
         query: safeQuery,
@@ -504,7 +509,11 @@ export default Vue.extend({
           } else {
             // 'All' is selected, delete by query.
             const rawQuery = String(this.queryParams.query || '').slice(0, 200);
-            params.query = rawQuery.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+            try {
+              params.query = rawQuery.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+            } catch (e) {
+              params.query = rawQuery.replace(/[^A-Za-z0-9\s]/g, ' ');
+            }
             params.all = this.bulk.all;
           }
 
