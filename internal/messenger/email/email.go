@@ -94,13 +94,15 @@ func New(name string, servers ...Server) (*Emailer, error) {
 				s.TLSConfig.ServerName = s.Host
 			}
 
-			// SSL/TLS, not STARTTLS.
-			switch s.TLSType {
-			case "TLS":
-				s.Opt.SSL = smtppool.SSLTLS
-			case "STARTTLS":
-				s.Opt.SSL = smtppool.SSLSTARTTLS
-			}
+            // SSL/TLS, not STARTTLS.
+            switch s.TLSType {
+            case "TLS":
+                s.Opt.SSL = smtppool.SSLTLS
+            case "STARTTLS":
+                s.Opt.SSL = smtppool.SSLSTARTTLS
+            default:
+                s.Opt.SSL = smtppool.SSLNone
+            }
 		}
 
 		pool, err := smtppool.New(s.Opt)
